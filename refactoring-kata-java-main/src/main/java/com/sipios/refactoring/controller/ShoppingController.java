@@ -28,6 +28,10 @@ public class ShoppingController {
 
 	private static final double DRESS_DISCOUNT = 0.8;
 	private static final double JACKET_DICOUNT = 0.9;
+
+	private static final String EXCEPTION_STANDARD_CUSTOMER = String.format("Price %d is too high for standard customer", p);
+	private static final string EXCEPTION_STANDARD_CUSTOMER = ;
+	private static final string EXCEPTION_STANDARD_CUSTOMER = ;
 	
 	private Logger logger = LoggerFactory.getLogger(ShoppingController.class);
 
@@ -95,27 +99,17 @@ public class ShoppingController {
 	public String getPrice(@RequestBody Body b) {
 		double p = 0;
 		
-		
 		p = getDiscountedPrice(b);
 		
 		try {
-			if (b.getType().equals(STANDARD_CUSTOMER)) {
-				if (p > 200) {
-					throw new Exception("Price (" + p + ") is too high for standard customer");
-				}
-			} else if (b.getType().equals(PREMIUM_CUSTOMER)) {
-				if (p > 800) {
-					throw new Exception("Price (" + p + ") is too high for premium customer");
-				}
-			} else if (b.getType().equals(PLATINUM_CUSTOMER)) {
-				if (p > 2000) {
-					throw new Exception("Price (" + p + ") is too high for platinum customer");
-				}
-			} else {
-				if (p > 200) {
-					throw new Exception("Price (" + p + ") is too high for standard customer");
-				}
-			}
+			if (b.getType().equals(STANDARD_CUSTOMER) && p > 200)
+					throw new Exception(String.format("Price %d is too high for standard customer", p));
+			else if (b.getType().equals(PREMIUM_CUSTOMER) && p > 800)
+					throw new Exception(String.format("Price %d is too high for premium customer", p));
+			else if (b.getType().equals(PLATINUM_CUSTOMER) && p > 2000)
+					throw new Exception(String.format("Price %d is too high for platinum customer", p));
+			if (p == 0)
+				throw new Exception(String.format("No items contains discount impossible"));
 		} catch (Exception e) {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
 		}
