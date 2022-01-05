@@ -15,6 +15,20 @@ import org.springframework.web.server.ResponseStatusException;
 @RestController
 @RequestMapping("/shopping")
 public class ShoppingController {
+	private static final String STANDARD_CUSTOMER = "STANDARD_CUSTOMER";
+	private static final String PREMIUM_CUSTOMER = "PREMIUM_CUSTOMER";
+	private static final String PLATINUM_CUSTOMER = "PLATINUM_CUSTOMER";
+	private static final String TSHIRT_CLOTHES = "PLATINUM_CUSTOMER";
+	private static final String DRESS_CLOTHES = "PLATINUM_CUSTOMER";
+	private static final String JACKET_CLOTHES = "PLATINUM_CUSTOMER";
+	
+	private static final int DRESS_PRICE = 30;
+	private static final int TSHIRT_PRICE = 50;
+	private static final int JACKET_PRICE = 100;
+	private static final double STANDARD_DISCOUNT = 1;
+	private static final double PREMIMUM_DISCOUNT = 0.9;
+	private static final double PLATIMUM_DISCOUNT = 0.5;
+	
 	private Logger logger = LoggerFactory.getLogger(ShoppingController.class);
 
 	@PostMapping
@@ -27,11 +41,11 @@ public class ShoppingController {
 		cal.setTime(date);
 
 		// Compute discount for customer
-		if (b.getType().equals("STANDARD_CUSTOMER")) {
+		if (b.getType().equals(STANDARD_CUSTOMER)) {
 			d = 1;
-		} else if (b.getType().equals("PREMIUM_CUSTOMER")) {
+		} else if (b.getType().equals(PREMIUM_CUSTOMER)) {
 			d = 0.9;
-		} else if (b.getType().equals("PLATINUM_CUSTOMER")) {
+		} else if (b.getType().equals(PLATINUM_CUSTOMER)) {
 			d = 0.5;
 		} else {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
@@ -49,12 +63,12 @@ public class ShoppingController {
 			for (int i = 0; i < b.getItems().length; i++) {
 				Item it = b.getItems()[i];
 
-				if (it.getType().equals("TSHIRT")) {
-					p += 30 * it.getNb() * d;
-				} else if (it.getType().equals("DRESS")) {
-					p += 50 * it.getNb() * d;
-				} else if (it.getType().equals("JACKET")) {
-					p += 100 * it.getNb() * d;
+				if (it.getType().equals(TSHIRT_CLOTHES)) {
+					p += DRESS_PRICE * it.getNb() * d;
+				} else if (it.getType().equals(DRESS_CLOTHES)) {
+					p += TSHIRT_PRICE * it.getNb() * d;
+				} else if (it.getType().equals(JACKET_CLOTHES)) {
+					p += JACKET_PRICE * it.getNb() * d;
 				}
 				// else if (it.getType().equals("SWEATSHIRT")) {
 				// price += 80 * it.getNb();
@@ -68,12 +82,12 @@ public class ShoppingController {
 			for (int i = 0; i < b.getItems().length; i++) {
 				Item it = b.getItems()[i];
 
-				if (it.getType().equals("TSHIRT")) {
-					p += 30 * it.getNb() * d;
-				} else if (it.getType().equals("DRESS")) {
-					p += 50 * it.getNb() * 0.8 * d;
-				} else if (it.getType().equals("JACKET")) {
-					p += 100 * it.getNb() * 0.9 * d;
+				if (it.getType().equals(TSHIRT_CLOTHES)) {
+					p += DRESS_PRICE * it.getNb() * d;
+				} else if (it.getType().equals(DRESS_CLOTHES)) {
+					p += TSHIRT_PRICE * it.getNb() * 0.8 * d;
+				} else if (it.getType().equals(JACKET_CLOTHES)) {
+					p += JACKET_PRICE * it.getNb() * 0.9 * d;
 				}
 				// else if (it.getType().equals("SWEATSHIRT")) {
 				// price += 80 * it.getNb();
@@ -82,15 +96,15 @@ public class ShoppingController {
 		}
 
 		try {
-			if (b.getType().equals("STANDARD_CUSTOMER")) {
+			if (b.getType().equals(STANDARD_CUSTOMER)) {
 				if (p > 200) {
 					throw new Exception("Price (" + p + ") is too high for standard customer");
 				}
-			} else if (b.getType().equals("PREMIUM_CUSTOMER")) {
+			} else if (b.getType().equals(PREMIUM_CUSTOMER)) {
 				if (p > 800) {
 					throw new Exception("Price (" + p + ") is too high for premium customer");
 				}
-			} else if (b.getType().equals("PLATINUM_CUSTOMER")) {
+			} else if (b.getType().equals(PLATINUM_CUSTOMER)) {
 				if (p > 2000) {
 					throw new Exception("Price (" + p + ") is too high for platinum customer");
 				}
