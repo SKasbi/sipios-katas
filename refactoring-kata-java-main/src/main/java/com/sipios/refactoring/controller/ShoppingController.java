@@ -25,11 +25,14 @@ public class ShoppingController {
 	private static final int DRESS_PRICE = 30;
 	private static final int TSHIRT_PRICE = 50;
 	private static final int JACKET_PRICE = 100;
+
+	private static final double DRESS_DISCOUNT = 0.8;
+	private static final double JACKET_DICOUNT = 0.9;
 	
 	private Logger logger = LoggerFactory.getLogger(ShoppingController.class);
 
 
-	private static double getDiscount(@RequestBody Body b) {
+	private static double getCustomerDiscount(@RequestBody Body b) {
 		double d;
 		if (b.getType().equals(STANDARD_CUSTOMER)) {
 			d = 1;
@@ -42,52 +45,59 @@ public class ShoppingController {
 		}
 		return d;
 	}
-	@PostMapping
-	public String getPrice(@RequestBody Body b) {
-		double p = 0;
 
+	
+	// Compute total amount depending on the types and quantity of product and
+	// if we are in winter or summer discounts periods
+	private static double getDiscountedPrice(@RequestBody Body b) {
 		Date date = new Date();
 		Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("Europe/Paris"));
 		cal.setTime(date);
-		
-		// Compute total amount depending on the types and quantity of product and
-		// if we are in winter or summer discounts periods
-		if (!(cal.get(Calendar.DAY_OF_MONTH) < 15 && cal.get(Calendar.DAY_OF_MONTH) > 5 && cal.get(Calendar.MONTH) == 5)
-				&& !(cal.get(Calendar.DAY_OF_MONTH) < 15 && cal.get(Calendar.DAY_OF_MONTH) > 5
-						&& cal.get(Calendar.MONTH) == 0)) {
-			if (b.getItems() == null) {
-				return "0";
-			}
+		double price = 0;
 
-			for (int i = 0; i < b.getItems().length; i++) {
-				Item it = b.getItems()[i];
+		if (b.getItems() == null) {
+			return 0;
+		}
 
+		for (int i = 0; i < b.getItems().length; i++) {
+			Item it = b.getItems()[i];
+		if (
+			!(
+			cal.get(Calendar.DAY_OF_MONTH) < 15 &&
+			cal.get(Calendar.DAY_OF_MONTH) > 5 && 
+			cal.get(Calendar.MONTH) == 5)
+			&& 
+			!(
+			cal.get(Calendar.DAY_OF_MONTH) < 15 &&
+			cal.get(Calendar.DAY_OF_MONTH) > 5 &&
+			cal.get(Calendar.MONTH) == 0)) 
+			{
 				if (it.getType().equals(TSHIRT_CLOTHES)) {
-					p += TSHIRT_PRICE * it.getNb() * getDiscount(b);
+					price += TSHIRT_PRICE * it.getNb() * getCustomerDiscount(b);
 				} else if (it.getType().equals(DRESS_CLOTHES)) {
-					p += DRESS_PRICE * it.getNb() * getDiscount(b);
+					price += DRESS_PRICE * it.getNb() * getCustomerDiscount(b);
 				} else if (it.getType().equals(JACKET_CLOTHES)) {
-					p += JACKET_PRICE * it.getNb() * getDiscount(b);
+					price += JACKET_PRICE * it.getNb() * getCustomerDiscount(b);
 				}
-			}
-		} else {
-			if (b.getItems() == null) {
-				return "0";
-			}
-
-			for (int i = 0; i < b.getItems().length; i++) {
-				Item it = b.getItems()[i];
-
+			} else {
 				if (it.getType().equals(TSHIRT_CLOTHES)) {
-					p += DRESS_PRICE * it.getNb() * getDiscount(b);
+					price += TSHIRT_PRICE * it.getNb() * getCustomerDiscount(b);
 				} else if (it.getType().equals(DRESS_CLOTHES)) {
-					p += TSHIRT_PRICE * it.getNb() * 0.8 * getDiscount(b);
+					price += DRESS_PRICE * it.getNb() * DRESS_DISCOUNT *  getCustomerDiscount(b);
 				} else if (it.getType().equals(JACKET_CLOTHES)) {
-					p += JACKET_PRICE * it.getNb() * 0.9 * getDiscount(b);
+					price += JACKET_PRICE * it.getNb() * JACKET_DICOUNT * getCustomerDiscount(b);
 				}
 			}
 		}
-
+		return price;
+	}
+	@PostMapping
+	public String getPrice(@RequestBody Body b) {
+		double p = 0;
+		
+		
+		p = getDiscountedPrice(b);
+		
 		try {
 			if (b.getType().equals(STANDARD_CUSTOMER)) {
 				if (p > 200) {
