@@ -25,22 +25,12 @@ public class ShoppingController {
 	private static final int DRESS_PRICE = 30;
 	private static final int TSHIRT_PRICE = 50;
 	private static final int JACKET_PRICE = 100;
-	private static final double STANDARD_DISCOUNT = 1;
-	private static final double PREMIMUM_DISCOUNT = 0.9;
-	private static final double PLATIMUM_DISCOUNT = 0.5;
 	
 	private Logger logger = LoggerFactory.getLogger(ShoppingController.class);
 
-	@PostMapping
-	public String getPrice(@RequestBody Body b) {
-		double p = 0;
+
+	private static double getDiscount(@RequestBody Body b) {
 		double d;
-
-		Date date = new Date();
-		Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("Europe/Paris"));
-		cal.setTime(date);
-
-		// Compute discount for customer
 		if (b.getType().equals(STANDARD_CUSTOMER)) {
 			d = 1;
 		} else if (b.getType().equals(PREMIUM_CUSTOMER)) {
@@ -50,6 +40,15 @@ public class ShoppingController {
 		} else {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
 		}
+		return d;
+	}
+	@PostMapping
+	public String getPrice(@RequestBody Body b) {
+		double p = 0;
+
+		Date date = new Date();
+		Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("Europe/Paris"));
+		cal.setTime(date);
 		
 		// Compute total amount depending on the types and quantity of product and
 		// if we are in winter or summer discounts periods
@@ -64,11 +63,11 @@ public class ShoppingController {
 				Item it = b.getItems()[i];
 
 				if (it.getType().equals(TSHIRT_CLOTHES)) {
-					p += DRESS_PRICE * it.getNb() * d;
+					p += TSHIRT_PRICE * it.getNb() * getDiscount(b);
 				} else if (it.getType().equals(DRESS_CLOTHES)) {
-					p += TSHIRT_PRICE * it.getNb() * d;
+					p += DRESS_PRICE * it.getNb() * getDiscount(b);
 				} else if (it.getType().equals(JACKET_CLOTHES)) {
-					p += JACKET_PRICE * it.getNb() * d;
+					p += JACKET_PRICE * it.getNb() * getDiscount(b);
 				}
 			}
 		} else {
@@ -80,11 +79,11 @@ public class ShoppingController {
 				Item it = b.getItems()[i];
 
 				if (it.getType().equals(TSHIRT_CLOTHES)) {
-					p += DRESS_PRICE * it.getNb() * d;
+					p += DRESS_PRICE * it.getNb() * getDiscount(b);
 				} else if (it.getType().equals(DRESS_CLOTHES)) {
-					p += TSHIRT_PRICE * it.getNb() * 0.8 * d;
+					p += TSHIRT_PRICE * it.getNb() * 0.8 * getDiscount(b);
 				} else if (it.getType().equals(JACKET_CLOTHES)) {
-					p += JACKET_PRICE * it.getNb() * 0.9 * d;
+					p += JACKET_PRICE * it.getNb() * 0.9 * getDiscount(b);
 				}
 			}
 		}
