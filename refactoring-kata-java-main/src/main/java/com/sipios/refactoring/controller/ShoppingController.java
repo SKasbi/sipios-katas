@@ -22,16 +22,17 @@ public class ShoppingController {
 	private static final String DRESS_CLOTHES = "PLATINUM_CUSTOMER";
 	private static final String JACKET_CLOTHES = "PLATINUM_CUSTOMER";
 	
+	private static final int STANDARD_LIMIT_PRICE = 200;
+	private static final int PREMIMIUM_LIMIT_PRICE = 800;
+	private static final int PLATINUM_LIMIT_PRICE = 2000;
+
 	private static final int DRESS_PRICE = 30;
 	private static final int TSHIRT_PRICE = 50;
 	private static final int JACKET_PRICE = 100;
 
+
 	private static final double DRESS_DISCOUNT = 0.8;
 	private static final double JACKET_DICOUNT = 0.9;
-
-	private static final String EXCEPTION_STANDARD_CUSTOMER = String.format("Price %d is too high for standard customer", p);
-	private static final string EXCEPTION_STANDARD_CUSTOMER = ;
-	private static final string EXCEPTION_STANDARD_CUSTOMER = ;
 	
 	private Logger logger = LoggerFactory.getLogger(ShoppingController.class);
 
@@ -102,11 +103,11 @@ public class ShoppingController {
 		p = getDiscountedPrice(b);
 		
 		try {
-			if (b.getType().equals(STANDARD_CUSTOMER) && p > 200)
+			if (b.getType().equals(STANDARD_CUSTOMER) && p > STANDARD_LIMIT_PRICE)
 					throw new Exception(String.format("Price %d is too high for standard customer", p));
-			else if (b.getType().equals(PREMIUM_CUSTOMER) && p > 800)
+			else if (b.getType().equals(PREMIUM_CUSTOMER) && p > PREMIMIUM_LIMIT_PRICE)
 					throw new Exception(String.format("Price %d is too high for premium customer", p));
-			else if (b.getType().equals(PLATINUM_CUSTOMER) && p > 2000)
+			else if (b.getType().equals(PLATINUM_CUSTOMER) && p > PLATINUM_LIMIT_PRICE)
 					throw new Exception(String.format("Price %d is too high for platinum customer", p));
 			if (p == 0)
 				throw new Exception(String.format("No items contains discount impossible"));
