@@ -66,33 +66,32 @@ public class ShoppingController {
 
 		for (int i = 0; i < b.getItems().length; i++) {
 			Item it = b.getItems()[i];
-		if (
-			!(
-			cal.get(Calendar.DAY_OF_MONTH) < 15 &&
-			cal.get(Calendar.DAY_OF_MONTH) > 5 && 
-			cal.get(Calendar.MONTH) == 5)
-			&& 
-			!(
-			cal.get(Calendar.DAY_OF_MONTH) < 15 &&
-			cal.get(Calendar.DAY_OF_MONTH) > 5 &&
-			cal.get(Calendar.MONTH) == 0)) 
+			
+			if (it.getType().equals(TSHIRT_CLOTHES))
+				price += TSHIRT_PRICE * it.getNb() * getCustomerDiscount(b);
+			
+				if (
+				!(
+				cal.get(Calendar.DAY_OF_MONTH) < 15 &&
+				cal.get(Calendar.DAY_OF_MONTH) > 5 && 
+				cal.get(Calendar.MONTH) == 5)
+				&& 
+				!(
+				cal.get(Calendar.DAY_OF_MONTH) < 15 &&
+				cal.get(Calendar.DAY_OF_MONTH) > 5 &&
+				cal.get(Calendar.MONTH) == 0)) 
 			{
-				if (it.getType().equals(TSHIRT_CLOTHES)) {
-					price += TSHIRT_PRICE * it.getNb() * getCustomerDiscount(b);
-				} else if (it.getType().equals(DRESS_CLOTHES)) {
+				if (it.getType().equals(DRESS_CLOTHES))
 					price += DRESS_PRICE * it.getNb() * getCustomerDiscount(b);
-				} else if (it.getType().equals(JACKET_CLOTHES)) {
+				else if (it.getType().equals(JACKET_CLOTHES))
 					price += JACKET_PRICE * it.getNb() * getCustomerDiscount(b);
-				}
 			} else {
-				if (it.getType().equals(TSHIRT_CLOTHES)) {
-					price += TSHIRT_PRICE * it.getNb() * getCustomerDiscount(b);
-				} else if (it.getType().equals(DRESS_CLOTHES)) {
+				if (it.getType().equals(DRESS_CLOTHES))
 					price += DRESS_PRICE * it.getNb() * DRESS_DISCOUNT *  getCustomerDiscount(b);
-				} else if (it.getType().equals(JACKET_CLOTHES)) {
+				else if (it.getType().equals(JACKET_CLOTHES))
 					price += JACKET_PRICE * it.getNb() * JACKET_DICOUNT * getCustomerDiscount(b);
-				}
 			}
+
 		}
 		return price;
 	}
